@@ -1,0 +1,22 @@
+#!/bin/sh
+
+if [ "$(id -u)" = "0" ]; then
+  echo "Don't run as root, exiting .."
+  exit 10
+fi
+
+TMPDIR1="$( mktemp -t -d tmp_ventoy.XXXXXXXXXX )"
+
+pkexec bash -c '( cd /opt/ventoy-usb/ ; ./VentoyWeb.sh ) &'
+cd "$TMPDIR1"
+
+sleep 0.25
+COUNTER="24"
+while [ -z "$( ps -ef | grep "V2DServer" | grep "root" )" ] && [ "$COUNTER" -gt "0" ] ; do
+  # echo ".. waiting cycle: $COUNTER"
+  sleep 1
+  COUNTER=$(( COUNTER - 1 ))
+done
+sleep 0.25
+
+xdg-open http://127.0.0.1:24680

@@ -1,0 +1,8 @@
+#!/bin/sh
+if [ "$(id -u)" = "0" ]; then
+  echo "Don't run as root, exiting .."
+  exit 10
+fi
+TMPDIR1="$( mktemp -t -d tmp_ventoy.XXXXXXXXXX )"
+cd "$TMPDIR1"
+pkexec /opt/ventoy-usb/Ventoy2Disk.sh "$@"
